@@ -18,6 +18,8 @@
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import absolute_import
+
 import os
 import sys
 import textwrap
@@ -190,8 +192,8 @@ def get_module_list_text(module_list):
             sys.stderr.write("ERROR: module %s has a documentation error formatting or is missing documentation\n" % module)
     return "\n".join(text)
 
-def main():
 
+def main():
     p = optparse.OptionParser(
         version=version("%prog"),
         usage='usage: %prog [options] [module...]',
@@ -290,6 +292,3 @@ def main():
             # probably a quoting issue.
             sys.stderr.write("ERROR: module %s missing documentation (or could not parse documentation)\n" % module)
     pager(text)
-
-if __name__ == '__main__':
-    main()

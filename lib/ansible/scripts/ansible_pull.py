@@ -38,6 +38,8 @@
 #
 # the source repo must contain at least one of these playbooks.
 
+from __future__ import absolute_import
+
 import os
 import shutil
 import subprocess
@@ -228,7 +230,7 @@ def main(args):
 
     return rc
 
-if __name__ == '__main__':
+def main():
     try:
         sys.exit(main(sys.argv[1:]))
     except KeyboardInterrupt, e:

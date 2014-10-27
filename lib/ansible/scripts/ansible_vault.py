@@ -18,6 +18,8 @@
 # ansible-vault is a script that encrypts/decrypts YAML files. See
 # http://docs.ansible.com/playbooks_vault.html for more details.
 
+from __future__ import absolute_import
+
 #__requires__ = ['ansible']
 #import pkg_resources
 
@@ -209,7 +211,6 @@ def execute_rekey(args, options, parser):
 #-------------------------------------------------------------------------------------
 
 def main():
-
     action = get_action(sys.argv)
     parser = build_option_parser(action)
     (options, args) = parser.parse_args()
@@ -228,6 +229,3 @@ def main():
             print traceback.format_exc()
         print "ERROR:",err
         sys.exit(1)
-
-if __name__ == "__main__":
-    main()

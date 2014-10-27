@@ -21,6 +21,8 @@
 #
 ########################################################################
 
+from __future__ import absolute_import
+
 import datetime
 import json
 import os
@@ -896,6 +898,3 @@ def main():
     #except KeyError, e:
     #    print "- error: %s is not a valid action. Valid actions are: %s" % (action, ", ".join(VALID_ACTIONS))
     #    sys.exit(1)
-
-if __name__ == "__main__":
-    main()

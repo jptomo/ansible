@@ -26,13 +26,15 @@ setup(name='ansible',
       package_data={
          '': ['module_utils/*.ps1'],
       },
-      scripts=[
-         'bin/ansible',
-         'bin/ansible-playbook',
-         'bin/ansible-pull',
-         'bin/ansible-doc',
-         'bin/ansible-galaxy',
-         'bin/ansible-vault',
-      ],
+      entry_points={
+          'console_scripts': [
+              'ansible = ansible.scripts.ansible:main',
+              'ansible-playbook = ansible.scripts.ansible_playbook:main',
+              'ansible-pull = ansible.scripts.ansible_pull:main',
+              'ansible-doc = ansible.scripts.ansible_doc:main',
+              'ansible-galaxy = ansible.scripts.ansible_galaxy:main',
+              'ansible-vault = ansible.scripts.ansible_vault:main',
+          ],
+      },
       data_files=[],
 )

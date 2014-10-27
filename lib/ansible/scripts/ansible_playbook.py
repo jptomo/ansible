@@ -18,6 +18,8 @@
 
 #######################################################
 
+from __future__ import absolute_import
+
 #__requires__ = ['ansible']
 #import pkg_resources
 
@@ -316,7 +318,7 @@ def main(args):
     return 0
 
 
-if __name__ == "__main__":
+def main():
     display(" ", log_only=True)
     display(" ".join(sys.argv), log_only=True)
     display(" ", log_only=True)
