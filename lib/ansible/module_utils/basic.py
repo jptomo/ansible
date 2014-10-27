@@ -52,7 +52,6 @@ import pipes
 import shlex
 import subprocess
 import sys
-import syslog
 import types
 import time
 import select
@@ -60,11 +59,17 @@ import shutil
 import stat
 import tempfile
 import traceback
-import grp
-import pwd
 import platform
 import errno
 import tempfile
+
+from ansible.compat import (
+    get_local_username,
+    openlog,
+    syslog,
+    getgrgid,
+    getgrnam,
+)
 
 try:
     import json
@@ -101,7 +106,6 @@ try:
     from systemd import journal
     has_journal = True
 except ImportError:
-    import syslog
     has_journal = False
 
 try:
@@ -508,7 +512,7 @@ class AnsibleModule(object):
             uid = int(owner)
         except ValueError:
             try:
-                uid = pwd.getpwnam(owner).pw_uid
+                uid = getpwnam(owner).pw_uid
             except KeyError:
                 self.fail_json(path=path, msg='chown failed: failed to look up user %s' % owner)
         if orig_uid != uid:
@@ -530,7 +534,7 @@ class AnsibleModule(object):
             gid = int(group)
         except ValueError:
             try:
-                gid = grp.getgrnam(group).gr_gid
+                gid = getgrnam(group).gr_gid
             except KeyError:
                 self.fail_json(path=path, msg='chgrp failed: failed to look up group %s' % group)
         if orig_gid != gid:
@@ -720,11 +724,11 @@ class AnsibleModule(object):
             kwargs['uid'] = uid
             kwargs['gid'] = gid
             try:
-                user = pwd.getpwuid(uid)[0]
+                user = get_local_username()
             except KeyError:
                 user = str(uid)
             try:
-                group = grp.getgrgid(gid)[0]
+                group = getgrgid(gid)[0]
             except KeyError:
                 group = str(gid)
             kwargs['owner'] = user
@@ -1103,11 +1107,11 @@ class AnsibleModule(object):
                 journal.sendv(*journal_args)
             except IOError, e:
                 # fall back to syslog since logging to journal failed
-                syslog.openlog(str(module), 0, syslog.LOG_USER)
-                syslog.syslog(syslog.LOG_NOTICE, msg) #1
+                openlog(str(module), 0, syslog.LOG_USER)
+                syslog(syslog.LOG_NOTICE, msg) #1
         else:
-            syslog.openlog(str(module), 0, syslog.LOG_USER)
-            syslog.syslog(syslog.LOG_NOTICE, msg) #2
+            openlog(str(module), 0, syslog.LOG_USER)
+            syslog(syslog.LOG_NOTICE, msg) #2
 
     def _set_cwd(self):
         try:
@@ -1293,7 +1297,7 @@ class AnsibleModule(object):
         # if the original login_name doesn't match the currently
         # logged-in user, or if the SUDO_USER environment variable
         # is set, then this user has switched their credentials
-        switched_user = login_name and login_name != pwd.getpwuid(os.getuid())[0] or os.environ.get('SUDO_USER')
+        switched_user = login_name and login_name != get_local_username() or os.environ.get('SUDO_USER')
 
         try:
             # Optimistically try a rename, solves some corner cases and can avoid useless work, throws exception if not atomic.

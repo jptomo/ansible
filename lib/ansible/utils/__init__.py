@@ -36,8 +36,6 @@ import ast
 import time
 import StringIO
 import stat
-import termios
-import tty
 import pipes
 import random
 import difflib
@@ -50,7 +48,8 @@ import subprocess
 import contextlib
 import jinja2.exceptions
 
-from vault import VaultLib
+from ansible.compat import TCSADRAIN, tcgetattr, tcsetattr
+from ansible.utils.vault import VaultLib
 
 VERBOSITY=0
 
@@ -952,12 +951,12 @@ def version_info(gitinfo=False):
 def getch():
     ''' read in a single character '''
     fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
+    old_settings = tcgetattr(fd)
     try:
-        tty.setraw(sys.stdin.fileno())
+        setraw(sys.stdin.fileno())
         ch = sys.stdin.read(1)
     finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        tcsetattr(fd, TCSADRAIN, old_settings)
     return ch
 
 def sanitize_output(str):

@@ -28,11 +28,12 @@ import ansible.constants as C
 import time
 import subprocess
 import datetime
-import pwd
 import ast
 import traceback
 
 from ansible.utils.string_functions import count_newlines_from_end
+from ansible.compat import get_file_owner_name
+
 
 class Globals(object):
 
@@ -255,7 +256,7 @@ def template_from_file(basedir, path, vars, vault_password=None):
         raise error
     vars = vars.copy()
     try:
-        template_uid = pwd.getpwuid(os.stat(realpath).st_uid).pw_name
+        template_uid = get_file_owner_name(realpath)
     except:
         template_uid = os.stat(realpath).st_uid
     vars['template_host']   = os.uname()[1]

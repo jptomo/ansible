@@ -18,7 +18,6 @@
 import multiprocessing
 import signal
 import os
-import pwd
 import Queue
 import random
 import traceback
@@ -49,6 +48,8 @@ from ansible.module_common import ModuleReplacer
 from ansible.module_utils.splitter import split_args, unquote
 from ansible.cache import FactCache
 from ansible.utils import update_hash
+from ansible.compat import get_local_username
+
 
 module_replacer = ModuleReplacer(strip_comments=False)
 
@@ -243,7 +244,7 @@ class Runner(object):
         self.run_hosts = run_hosts
 
         if self.transport == 'local':
-            self.remote_user = pwd.getpwuid(os.geteuid())[0]
+            self.remote_user = get_local_username()
 
         if module_path is not None:
             for i in module_path.split(os.pathsep):

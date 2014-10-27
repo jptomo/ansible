@@ -16,10 +16,12 @@
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import pwd
 import sys
 import ConfigParser
 from string import ascii_letters, digits
+
+from ansible.compat import get_local_username
+
 
 # copied from utils, avoid circular reference fun :)
 def mk_boolean(value):
@@ -88,7 +90,7 @@ def shell_expand_path(path):
 
 p = load_config_file()
 
-active_user   = pwd.getpwuid(os.geteuid())[0]
+active_user = get_local_username()
 
 # check all of these extensions when looking for yaml files for things like
 # group variables -- really anything we can load
